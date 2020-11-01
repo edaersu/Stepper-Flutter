@@ -4,97 +4,198 @@ import 'package:stepper_demo/test_page/test_view_model.dart';
 import 'package:flutter/cupertino.dart';
 
 class TestView extends TestViewModel {
-  int currentStep = 0;
-  Step _buildStep({
-    @required Widget title,
-    StepState state = StepState.indexed,
-    bool isActive = false,
-  }) {
-    return Step(
-      title: title,
-      isActive: isActive,
-      state: state,
-      content: LimitedBox(
-        maxWidth: MediaQuery.of(context).size.width,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: 100,
-          child: Card(
-            color: Colors.deepOrange[100],
-            child: Center(
-              child: Text(
-                "Hello",
-                style: TextStyle(fontSize: 17),
-              ),
-            ),
+  List<Step> steps = [
+    Step(
+      title: const Text('1. soru'),
+      isActive: true,
+      state: StepState.indexed,
+      content: Column(
+        children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(labelText: 'isim'),
           ),
-        ),
+          TextFormField(
+            decoration: InputDecoration(labelText: 'soyisim'),
+          ),
+        ],
       ),
-    );
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('2. soru'),
+      content: Column(
+        children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Home Address'),
+          ),
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Postcode'),
+          ),
+        ],
+      ),
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('3.soru'),
+      content: Column(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('4.soru'),
+      content: Column(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('5.soru'),
+      content: Column(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('6.soru'),
+      content: Column(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('7.soru'),
+      content: Column(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('8.soru'),
+      content: Column(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('9.soru'),
+      content: Column(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ),
+    Step(
+      isActive: true,
+      state: StepState.indexed,
+      title: const Text('10.soru'),
+      content: Column(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ),
+  ];
+
+  int currentStep = 0;
+  bool complete = false;
+
+  next() {
+    currentStep + 1 != steps.length
+        ? goTo(currentStep + 1)
+        : setState(() => complete = true);
+  }
+
+  cancel() {
+    if (currentStep > 0) {
+      goTo(currentStep - 1);
+    }
+  }
+
+  goTo(int step) {
+    setState(() => currentStep = step);
+  }
+
+  StepperType stepperType = StepperType.vertical;
+
+  switchStepType() {
+    setState(() => stepperType == StepperType.horizontal
+        ? stepperType = StepperType.vertical
+        : stepperType = StepperType.horizontal);
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text("Stapper Demo"),
-      ),
-      child: SafeArea(
-        child: _stepper(StepperType.vertical),
-      ),
-    );
-  }
-
-  CupertinoStepper _stepper(StepperType type) {
-    return CupertinoStepper(
-      type: type,
-      // yeni current_stepin yüklenmesini sağlıyor
-      currentStep: currentStep,
-      // üzerine basılan soruya gitme
-      onStepTapped: (step) => setState(() => currentStep = step),
-      // continue seçeneğini deactive ediyor.
-      onStepContinue: true
-          ? () => setState(() {
-                if (currentStep != 9)
-                  ++currentStep;
-                else if (currentStep == 9) {
-                  print("go");
-                }
-              })
-          : null,
-      //cancel seçeneğini deactive ediyor.
-      onStepCancel: true
-          ? () => setState(() {
-                if (currentStep == 0) {
-                  print("o yeah");
-                } else {
-                  --currentStep;
-                }
-              })
-          : null,
-      steps: [
-        for (var i = 0; i < 10; ++i)
-          _buildStep(
-              title: Text('${i + 1}. Soru'),
-              // bulunan stepin yuvarlağını yakma(nerde olduğunu görsel olarak bildirme yuvarlak kalem kısmı)
-              isActive: i == currentStep,
-              state: i == currentStep
-                  ? StepState.editing
-                  : i < currentStep ? StepState.complete : StepState.indexed),
-      ],
-
-      /*
-      /// örnek bir step:
-       for (var i = 0; i < 2; ++i)
-          _buildStep(
-              title: Text('${i + 1}. Soru'),
-              isActive: i == currentStep,
-              state: i == currentStep
-                  ? StepState.editing
-                  : i < currentStep ? StepState.complete : StepState.indexed),
-        _buildStep(title: Text("Error"), state: StepState.error),
-        _buildStep(title: Text("Disabled"), state: StepState.indexed)
-      */
-    );
+    return new Scaffold(
+        appBar: AppBar(
+          title: Text('Create an account'),
+        ),
+        body: Column(children: <Widget>[
+          complete
+              ? Expanded(
+                  child: Center(
+                    child: AlertDialog(
+                      title: new Text("Profile Created"),
+                      content: new Text(
+                        "Tada!",
+                      ),
+                      actions: <Widget>[
+                        new FlatButton(
+                          child: new Text("Close"),
+                          onPressed: () {
+                            setState(() => complete = false);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: Stepper(
+                    steps: steps,
+                    type: stepperType,
+                    currentStep: currentStep,
+                    onStepContinue: next,
+                    onStepTapped: (step) => goTo(step),
+                    onStepCancel: cancel,
+                  ),
+                ),
+        ]));
   }
 }
