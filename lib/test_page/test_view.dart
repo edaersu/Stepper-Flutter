@@ -1,160 +1,34 @@
 import 'package:cupertino_stepper/cupertino_stepper.dart';
 import 'package:flutter/material.dart';
+import 'package:stepper_demo/test_page/test_model.dart';
 import 'package:stepper_demo/test_page/test_view_model.dart';
 import 'package:flutter/cupertino.dart';
 
 class TestView extends TestViewModel {
-  List<Step> steps2 = List<Step>(10);
-  List<Step> steps = [
-    Step(
-      title: const Text('1. soru'),
-      isActive: true,
-      state: StepState.indexed,
-      content: Column(
-        children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(labelText: 'isim'),
-          ),
-          TextFormField(
-            decoration: InputDecoration(labelText: 'soyisim'),
-          ),
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('2. soru'),
-      content: Column(
-        children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Home Address'),
-          ),
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Postcode'),
-          ),
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('3.soru'),
-      content: Column(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.red,
-          )
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('4.soru'),
-      content: Column(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.red,
-          )
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('5.soru'),
-      content: Column(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.red,
-          )
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('6.soru'),
-      content: Column(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.red,
-          )
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('7.soru'),
-      content: Column(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.red,
-          )
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('8.soru'),
-      content: Column(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.red,
-          )
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('9.soru'),
-      content: Column(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.red,
-          )
-        ],
-      ),
-    ),
-    Step(
-      isActive: true,
-      state: StepState.indexed,
-      title: const Text('10.soru'),
-      content: Column(
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.red,
-          )
-        ],
-      ),
-    ),
-  ];
+  int selectedRadioTile;
+  int dogrucevap = 0;
+  int yanliscevap = 0;
+  int selectedRadio;
 
+  ///radiobutton
+  @override
+  void initState() {
+    super.initState();
+    selectedRadio = 0;
+    selectedRadioTile = 0;
+  }
+
+  setSelectedRadioTile(int val) {
+    setState(() {
+      selectedRadioTile = val;
+    });
+  }
+
+  ///stepper
+  List<Step> steps = List<Step>(10);
   int currentStep = 0;
   bool complete = false;
-
-  next() {
-    currentStep + 1 != steps.length
-        ? goTo(currentStep + 1)
-        : setState(() => complete = true);
-  }
-
-  cancel() {
-    if (currentStep > 0) {
-      goTo(currentStep - 1);
-    }
-  }
-
-  goTo(int step) {
-    setState(() => currentStep = step);
-  }
-
   StepperType stepperType = StepperType.vertical;
-
   switchStepType() {
     setState(() => stepperType == StepperType.horizontal
         ? stepperType = StepperType.vertical
@@ -164,32 +38,34 @@ class TestView extends TestViewModel {
   @override
   Widget build(BuildContext context) {
     for (var i = 0; i < 10; i++) {
-      steps2[i] = Step(
+      steps[i] = Step(
           isActive: true,
-          title: Text('${i + 1}.sorum'),
+          title: Text('${i + 1}.soru'),
           content: Column(
-            children: <Widget>[Text("${i + 1}.elemannn")],
+            children: soruCard(i),
           ),
-          state: StepState.indexed);
+          state: i == currentStep
+              ? StepState.editing
+              : i < currentStep ? StepState.complete : StepState.indexed);
     }
-    print(steps2);
 
     return new Scaffold(
         appBar: AppBar(
-          title: Text('Create an account'),
+          title: Text('Stapper Demo'),
         ),
         body: Column(children: <Widget>[
           complete
               ? Expanded(
                   child: Center(
                     child: AlertDialog(
-                      title: new Text("Profile Created"),
+                      title: new Text("Puanınız"),
                       content: new Text(
-                        "Tada!",
+                        "${dogrucevap * 10}",
+                        style: TextStyle(fontSize: 30),
                       ),
                       actions: <Widget>[
                         new FlatButton(
-                          child: new Text("Close"),
+                          child: new Text("Kapat"),
                           onPressed: () {
                             setState(() => complete = false);
                           },
@@ -200,14 +76,83 @@ class TestView extends TestViewModel {
                 )
               : Expanded(
                   child: Stepper(
-                    steps: steps2,
+                    steps: steps,
                     type: stepperType,
                     currentStep: currentStep,
-                    onStepContinue: next,
-                    onStepTapped: (step) => setState(() => currentStep = step),
-                    onStepCancel: cancel,
+                    //  onStepTapped: (step) => setState(() => currentStep = step),
+                    onStepContinue: true
+                        ? () => setState(() {
+                              puanhesapla(currentStep);
+                              if (currentStep != 9)
+                                ++currentStep;
+                              else if (currentStep == 9) {
+                                print("test bitti başka sayfaya geç");
+                                complete = true;
+                              }
+                            })
+                        : null,
+                    /*
+                                                      onStepCancel: true
+                                                          ? () => setState(() {
+                                                                if (currentStep == 0) {
+                                                                  print("geri gidiliyor..");
+                                                                } else {
+                                                                  --currentStep;
+                                                                }
+                                                              })
+                                                          : null,
+                                  
+                                                          */
                   ),
                 ),
         ]));
+  }
+
+  List<Widget> soruCard(int i) => <Widget>[
+        Column(
+          children: [
+            Text(soruList10[i].soru),
+            herbirbuton(soruList10[i].cevap1, 1),
+            herbirbuton(soruList10[i].cevap2, 2),
+            herbirbuton(soruList10[i].cevap3, 3),
+            herbirbuton(soruList10[i].cevap4, 4),
+          ],
+        )
+      ];
+
+  RadioListTile herbirbuton(String cevap, int i) {
+    return RadioListTile(
+      value: i,
+      groupValue: selectedRadioTile,
+      title: Text(
+        cevap,
+        style: TextStyle(fontSize: 13),
+      ),
+      onChanged: (val) {
+        print("Radio Tile pressed $val");
+        setSelectedRadioTile(val);
+      },
+      activeColor: Colors.black,
+      selected: true,
+    );
+  }
+
+  void puanhesapla(int index) {
+    // bulunduğum indexteki sorunun doğru cevabı ile seçilen radio button aynı mı?
+    // aynı ise dogru cevap++
+    // farklı ise yanlıs cevap ++
+    if (soruList10[index].dogrucevap == selectedRadioTile) {
+      dogrucevap++;
+      print(soruList10[index].dogrucevap.toString() +
+          "            " +
+          selectedRadioTile.toString());
+      print(dogrucevap);
+    } else {
+      yanliscevap++;
+      print(soruList10[index].dogrucevap.toString() +
+          "            " +
+          selectedRadioTile.toString());
+      print(yanliscevap);
+    }
   }
 }
