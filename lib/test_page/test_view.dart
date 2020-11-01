@@ -4,6 +4,7 @@ import 'package:stepper_demo/test_page/test_view_model.dart';
 import 'package:flutter/cupertino.dart';
 
 class TestView extends TestViewModel {
+  List<Step> steps2 = List<Step>(10);
   List<Step> steps = [
     Step(
       title: const Text('1. soru'),
@@ -162,6 +163,17 @@ class TestView extends TestViewModel {
 
   @override
   Widget build(BuildContext context) {
+    for (var i = 0; i < 10; i++) {
+      steps2[i] = Step(
+          isActive: true,
+          title: Text('${i + 1}.sorum'),
+          content: Column(
+            children: <Widget>[Text("${i + 1}.elemannn")],
+          ),
+          state: StepState.indexed);
+    }
+    print(steps2);
+
     return new Scaffold(
         appBar: AppBar(
           title: Text('Create an account'),
@@ -188,11 +200,11 @@ class TestView extends TestViewModel {
                 )
               : Expanded(
                   child: Stepper(
-                    steps: steps,
+                    steps: steps2,
                     type: stepperType,
                     currentStep: currentStep,
                     onStepContinue: next,
-                    onStepTapped: (step) => goTo(step),
+                    onStepTapped: (step) => setState(() => currentStep = step),
                     onStepCancel: cancel,
                   ),
                 ),
