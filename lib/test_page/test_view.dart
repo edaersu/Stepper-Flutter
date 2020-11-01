@@ -5,26 +5,12 @@ import 'package:stepper_demo/test_page/test_view_model.dart';
 import 'package:flutter/cupertino.dart';
 
 class TestView extends TestViewModel {
+  //radiobutton
   int selectedRadioTile;
   int dogrucevap = 0;
   int yanliscevap = 0;
   int selectedRadio;
-
-  ///radiobutton
-  @override
-  void initState() {
-    super.initState();
-    selectedRadio = 0;
-    selectedRadioTile = 0;
-  }
-
-  setSelectedRadioTile(int val) {
-    setState(() {
-      selectedRadioTile = val;
-    });
-  }
-
-  ///stepper
+  //stepper
   List<Step> steps = List<Step>(10);
   int currentStep = 0;
   bool complete = false;
@@ -36,18 +22,15 @@ class TestView extends TestViewModel {
   }
 
   @override
+  void initState() {
+    super.initState();
+    selectedRadio = 0;
+    selectedRadioTile = 0;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    for (var i = 0; i < 10; i++) {
-      steps[i] = Step(
-          isActive: true,
-          title: Text('${i + 1}.soru'),
-          content: Column(
-            children: soruCard(i),
-          ),
-          state: i == currentStep
-              ? StepState.editing
-              : i < currentStep ? StepState.complete : StepState.indexed);
-    }
+    build_stapper();
 
     return new Scaffold(
         appBar: AppBar(
@@ -92,20 +75,49 @@ class TestView extends TestViewModel {
                             })
                         : null,
                     /*
-                                                      onStepCancel: true
-                                                          ? () => setState(() {
-                                                                if (currentStep == 0) {
-                                                                  print("geri gidiliyor..");
-                                                                } else {
-                                                                  --currentStep;
-                                                                }
-                                                              })
-                                                          : null,
-                                  
-                                                          */
+                    onStepCancel: true
+                        ? () => setState(() {
+                            if (currentStep == 0) {
+                              print("geri gidiliyor..");
+                            } else {
+                              --currentStep;
+                            }
+                          })
+                      : null,
+                      */
                   ),
                 ),
         ]));
+  }
+
+  void puanhesapla(int index) {
+    if (soruList10[index].dogrucevap == selectedRadioTile) {
+      dogrucevap++;
+      print(soruList10[index].dogrucevap.toString() +
+          "            " +
+          selectedRadioTile.toString());
+      print(dogrucevap);
+    } else {
+      yanliscevap++;
+      print(soruList10[index].dogrucevap.toString() +
+          "            " +
+          selectedRadioTile.toString());
+      print(yanliscevap);
+    }
+  }
+
+  void build_stapper() {
+    for (var i = 0; i < 10; i++) {
+      steps[i] = Step(
+          isActive: true,
+          title: Text('${i + 1}.soru'),
+          content: Column(
+            children: soruCard(i),
+          ),
+          state: i == currentStep
+              ? StepState.editing
+              : i < currentStep ? StepState.complete : StepState.indexed);
+    }
   }
 
   List<Widget> soruCard(int i) => <Widget>[
@@ -137,22 +149,9 @@ class TestView extends TestViewModel {
     );
   }
 
-  void puanhesapla(int index) {
-    // bulunduğum indexteki sorunun doğru cevabı ile seçilen radio button aynı mı?
-    // aynı ise dogru cevap++
-    // farklı ise yanlıs cevap ++
-    if (soruList10[index].dogrucevap == selectedRadioTile) {
-      dogrucevap++;
-      print(soruList10[index].dogrucevap.toString() +
-          "            " +
-          selectedRadioTile.toString());
-      print(dogrucevap);
-    } else {
-      yanliscevap++;
-      print(soruList10[index].dogrucevap.toString() +
-          "            " +
-          selectedRadioTile.toString());
-      print(yanliscevap);
-    }
+  setSelectedRadioTile(int val) {
+    setState(() {
+      selectedRadioTile = val;
+    });
   }
 }
