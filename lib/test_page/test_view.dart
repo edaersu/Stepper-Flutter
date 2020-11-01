@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 class TestView extends TestViewModel {
   //radiobutton
   int selectedRadioTile;
+  int temp_selectedRadioTile;
   int dogrucevap = 0;
   int yanliscevap = 0;
   int selectedRadio;
@@ -104,6 +105,7 @@ class TestView extends TestViewModel {
           selectedRadioTile.toString());
       print(yanliscevap);
     }
+    selectedRadioTile = 0;
   }
 
   void build_stapper() {
